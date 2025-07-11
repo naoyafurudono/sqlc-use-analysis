@@ -63,6 +63,7 @@ func (e *Engine) AnalyzeDependencies(
 // analyzeSQLQueries analyzes SQL queries and extracts method information
 func (e *Engine) analyzeSQLQueries(queries []types.QueryInfo) (map[string]types.SQLMethodInfo, error) {
 	sqlMethods := make(map[string]types.SQLMethodInfo)
+	reporter := errors.NewErrorReporter(e.errorCollector)
 
 	for _, query := range queries {
 		// Create SQL Query object
@@ -76,13 +77,10 @@ func (e *Engine) analyzeSQLQueries(queries []types.QueryInfo) (map[string]types.
 		// Analyze the SQL query
 		analysisResult, err := e.sqlAnalyzer.AnalyzeQuery(sqlQuery)
 		if err != nil {
-			// Log error but continue processing
-			sqlErr := errors.NewError(errors.CategoryAnalysis, errors.SeverityError,
-				fmt.Sprintf("failed to analyze SQL query '%s': %v", query.Name, err))
-			sqlErr.Details["query_name"] = query.Name
-			sqlErr.Details["sql"] = query.SQL
-
-			if collectErr := e.errorCollector.Add(sqlErr); collectErr != nil {
+			// Log error but continue processing using the new error helper
+			queryReporter := reporter.WithQueryContext(query.Name, query.SQL)
+			if collectErr := queryReporter.Error(errors.CategoryAnalysis, 
+				fmt.Sprintf("failed to analyze SQL query: %v", err)); collectErr != nil {
 				return nil, collectErr
 			}
 			continue
