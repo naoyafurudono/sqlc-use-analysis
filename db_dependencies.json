@@ -1,0 +1,29 @@
+{
+  "metadata": {
+    "generated_at": "2025-07-11T19:12:42.001867+09:00",
+    "version": "dev",
+    "total_functions": 1,
+    "total_tables": 1,
+    "analysis_duration": 11625
+  },
+  "function_view": {
+    "example.Handler": [
+      {
+        "table": "users",
+        "operations": [
+          "SELECT"
+        ]
+      }
+    ]
+  },
+  "table_view": {
+    "users": [
+      {
+        "function": "example.Handler",
+        "operations": [
+          "SELECT"
+        ]
+      }
+    ]
+  }
+}
