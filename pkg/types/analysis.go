@@ -47,12 +47,15 @@ type GoFunctionInfo struct {
 	FullName      string     `json:"full_name"`
 	PackagePath   string     `json:"package_path"`
 	FunctionName  string     `json:"function_name"`
+	PackageName   string     `json:"package_name"`
 	Receiver      string     `json:"receiver,omitempty"`
 	FilePath      string     `json:"file_path"`
+	FileName      string     `json:"file_name"`
 	StartLine     int        `json:"start_line"`
 	EndLine       int        `json:"end_line"`
 	DirectCalls   []string   `json:"direct_calls"`
 	AllCalls      []string   `json:"all_calls"`
+	SQLCalls      []SQLCall  `json:"sql_calls"`
 }
 
 // CallInfo represents a function call
@@ -66,4 +69,70 @@ type CallInfo struct {
 type GeneratedFile struct {
 	Name     string `json:"name"`
 	Contents []byte `json:"contents"`
+}
+
+// SQLCall represents a call to an SQL method
+type SQLCall struct {
+	MethodName string `json:"method_name"`
+	Line       int    `json:"line"`
+	Column     int    `json:"column"`
+}
+
+// AnalysisResult represents the complete analysis result
+type AnalysisResult struct {
+	FunctionView map[string]FunctionViewEntry `json:"function_view"`
+	TableView    map[string]TableViewEntry    `json:"table_view"`
+}
+
+// FunctionViewEntry represents a function's database access information
+type FunctionViewEntry struct {
+	FunctionName string                    `json:"function_name"`
+	PackageName  string                    `json:"package_name"`
+	FileName     string                    `json:"file_name"`
+	StartLine    int                       `json:"start_line"`
+	EndLine      int                       `json:"end_line"`
+	TableAccess  map[string]TableAccessInfo `json:"table_access"`
+}
+
+// TableAccessInfo represents how a function accesses a table
+type TableAccessInfo struct {
+	TableName  string                       `json:"table_name"`
+	Operations map[string][]OperationCall   `json:"operations"`
+}
+
+// OperationCall represents a specific operation call
+type OperationCall struct {
+	MethodName string `json:"method_name"`
+	Line       int    `json:"line"`
+	Column     int    `json:"column"`
+}
+
+// TableViewEntry represents a table's access information
+type TableViewEntry struct {
+	TableName        string                      `json:"table_name"`
+	AccessedBy       map[string]FunctionAccess   `json:"accessed_by"`
+	OperationSummary map[string]int              `json:"operation_summary"`
+}
+
+// AnalysisSummary represents a summary of the analysis
+type AnalysisSummary struct {
+	FunctionCount   int            `json:"function_count"`
+	TableCount      int            `json:"table_count"`
+	OperationCounts map[string]int `json:"operation_counts"`
+	PackageCounts   map[string]int `json:"package_counts"`
+}
+
+// CircularDependency represents a circular dependency in the analysis
+type CircularDependency struct {
+	Functions []string `json:"functions"`
+	Type      string   `json:"type"`
+}
+
+// OptimizationSuggestion represents a suggestion for optimization
+type OptimizationSuggestion struct {
+	Type        string `json:"type"`
+	Function    string `json:"function,omitempty"`
+	Table       string `json:"table,omitempty"`
+	Description string `json:"description"`
+	Severity    string `json:"severity"`
 }

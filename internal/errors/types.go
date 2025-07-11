@@ -20,11 +20,13 @@ const (
 type ErrorCategory string
 
 const (
-	CategoryConfig    ErrorCategory = "CONFIG"     // 設定関連
-	CategoryParse     ErrorCategory = "PARSE"      // パース関連
-	CategoryAnalysis  ErrorCategory = "ANALYSIS"   // 解析関連
-	CategoryIO        ErrorCategory = "IO"         // 入出力関連
-	CategoryInternal  ErrorCategory = "INTERNAL"   // 内部エラー
+	CategoryConfig     ErrorCategory = "CONFIG"     // 設定関連
+	CategoryParse      ErrorCategory = "PARSE"      // パース関連
+	CategoryAnalysis   ErrorCategory = "ANALYSIS"   // 解析関連
+	CategoryIO         ErrorCategory = "IO"         // 入出力関連
+	CategoryInternal   ErrorCategory = "INTERNAL"   // 内部エラー
+	CategoryMapping    ErrorCategory = "MAPPING"    // マッピング関連
+	CategoryValidation ErrorCategory = "VALIDATION" // 検証関連
 )
 
 // AnalysisError represents an analysis error
