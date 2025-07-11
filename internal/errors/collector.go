@@ -123,3 +123,52 @@ func (ec *ErrorCollector) generateSummary() ErrorSummary {
 	
 	return summary
 }
+
+// GetMaxErrors returns the maximum number of errors
+func (ec *ErrorCollector) GetMaxErrors() int {
+	ec.mu.Lock()
+	defer ec.mu.Unlock()
+	return ec.maxErrors
+}
+
+// IsDebugMode returns whether debug mode is enabled
+func (ec *ErrorCollector) IsDebugMode() bool {
+	ec.mu.Lock()
+	defer ec.mu.Unlock()
+	return ec.stopOnFatal
+}
+
+// GetAllErrors returns all errors (both errors and warnings)
+func (ec *ErrorCollector) GetAllErrors() []*AnalysisError {
+	ec.mu.Lock()
+	defer ec.mu.Unlock()
+	
+	allErrors := make([]*AnalysisError, 0, len(ec.errors)+len(ec.warnings))
+	allErrors = append(allErrors, ec.errors...)
+	allErrors = append(allErrors, ec.warnings...)
+	
+	return allErrors
+}
+
+// Count returns the total number of errors and warnings
+func (ec *ErrorCollector) Count() int {
+	ec.mu.Lock()
+	defer ec.mu.Unlock()
+	return len(ec.errors) + len(ec.warnings)
+}
+
+// HasWarnings returns true if there are warnings
+func (ec *ErrorCollector) HasWarnings() bool {
+	ec.mu.Lock()
+	defer ec.mu.Unlock()
+	return len(ec.warnings) > 0
+}
+
+// Clear removes all errors from the collector
+func (ec *ErrorCollector) Clear() {
+	ec.mu.Lock()
+	defer ec.mu.Unlock()
+	
+	ec.errors = make([]*AnalysisError, 0)
+	ec.warnings = make([]*AnalysisError, 0)
+}

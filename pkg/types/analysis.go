@@ -136,3 +136,17 @@ type OptimizationSuggestion struct {
 	Description string `json:"description"`
 	Severity    string `json:"severity"`
 }
+
+// AnalysisReport represents the complete analysis report
+type AnalysisReport struct {
+	Summary      AnalysisSummary          `json:"summary"`
+	Dependencies AnalysisResult           `json:"dependencies"`
+	Circular     []CircularDependency     `json:"circular_dependencies"`
+	Suggestions  []OptimizationSuggestion `json:"optimization_suggestions"`
+}
+
+// QueryInfo represents information about a SQL query
+type QueryInfo struct {
+	Name string `json:"name"`
+	SQL  string `json:"sql"`
+}

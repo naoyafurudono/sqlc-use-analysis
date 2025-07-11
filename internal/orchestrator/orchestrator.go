@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/naoyafurudono/sqlc-use-analysis/internal/analyzer/dependency"
 	"github.com/naoyafurudono/sqlc-use-analysis/internal/config"
 	"github.com/naoyafurudono/sqlc-use-analysis/internal/errors"
 	"github.com/naoyafurudono/sqlc-use-analysis/pkg/types"
@@ -13,6 +14,7 @@ import (
 type Orchestrator struct {
 	config         *types.Config
 	errorCollector *errors.ErrorCollector
+	engine         *dependency.Engine
 }
 
 // New creates a new orchestrator
@@ -20,6 +22,7 @@ func New(cfg *types.Config, errorCollector *errors.ErrorCollector) (*Orchestrato
 	return &Orchestrator{
 		config:         cfg,
 		errorCollector: errorCollector,
+		engine:         dependency.NewEngine(errorCollector),
 	}, nil
 }
 

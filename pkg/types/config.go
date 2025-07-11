@@ -7,6 +7,9 @@ type Config struct {
 	OutputPath string   `json:"output_path" yaml:"output_path"`
 	Exclude    []string `json:"exclude" yaml:"exclude"`
 	
+	// Go パッケージパス
+	GoPackagePaths []string `json:"go_package_paths" yaml:"go_package_paths"`
+	
 	// 解析設定
 	Analysis AnalysisConfig `json:"analysis" yaml:"analysis"`
 	
