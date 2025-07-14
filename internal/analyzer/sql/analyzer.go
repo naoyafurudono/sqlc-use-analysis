@@ -204,6 +204,11 @@ func toPascalCase(s string) string {
 		return s
 	}
 	
+	// 既にPascalCaseの場合はそのまま返す
+	if isPascalCase(s) {
+		return s
+	}
+	
 	// アンダースコアやハイフンで分割
 	words := regexp.MustCompile(`[_\-\s]+`).Split(s, -1)
 	result := ""
@@ -216,6 +221,21 @@ func toPascalCase(s string) string {
 	}
 	
 	return result
+}
+
+// isPascalCase checks if a string is already in PascalCase format
+func isPascalCase(s string) bool {
+	if len(s) == 0 {
+		return false
+	}
+	
+	// 最初の文字が大文字かチェック
+	if s[0] < 'A' || s[0] > 'Z' {
+		return false
+	}
+	
+	// アンダースコアやハイフンがないかチェック
+	return !strings.ContainsAny(s, "_-")
 }
 
 // removeDuplicates removes duplicate strings from slice

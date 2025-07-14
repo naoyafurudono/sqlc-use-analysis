@@ -216,28 +216,88 @@ func (a *Analyzer) isSQLCMethod(objType types.Type, methodName string) bool {
 	// 型名を取得
 	typeName := objType.String()
 	
-	// SQLC生成コードの一般的なパターンをチェック
-	// 例: *main.Queries, *db.Queries, etc.
-	if a.containsQueriesType(typeName) {
-		return true
+	// まず、明らかにSQL driverメソッドを除外
+	if a.isStandardSQLMethod(methodName) {
+		return false
 	}
 	
-	// メソッド名のパターンをチェック (PascalCase)
-	if a.isPascalCase(methodName) {
+	// SQLC生成のQueries型かチェック（より厳密に）
+	if !a.isQueriesType(typeName) {
+		return false
+	}
+	
+	// メソッド名がsqlcパターンかチェック
+	if a.isSQLCMethodName(methodName) {
 		return true
 	}
 	
 	return false
 }
 
-// containsQueriesType checks if type name contains common SQLC patterns
+// isStandardSQLMethod checks if method name is a standard SQL driver method
+func (a *Analyzer) isStandardSQLMethod(methodName string) bool {
+	standardMethods := []string{
+		"QueryRowContext", "QueryContext", "ExecContext", "PrepareContext",
+		"Query", "QueryRow", "Exec", "Prepare",
+		"Scan", "Close", "Next", "Err", "Columns", "ColumnTypes",
+		"Begin", "Commit", "Rollback", "SetMaxIdleConns", "SetMaxOpenConns",
+		"Ping", "Stats", "Driver",
+	}
+	
+	for _, method := range standardMethods {
+		if methodName == method {
+			return true
+		}
+	}
+	
+	return false
+}
+
+// isQueriesType checks if type is an SQLC Queries type (more strict)
+func (a *Analyzer) isQueriesType(typeName string) bool {
+	// SQLC生成のQueries型の厳密なパターンチェック
+	// 例: *github.com/example/db.Queries, *main.Queries, *db.Queries
+	patterns := []string{
+		".Queries",  // パッケージ.Queries
+		"*Queries",  // *Queries
+	}
+	
+	for _, pattern := range patterns {
+		if contains(typeName, pattern) {
+			return true
+		}
+	}
+	
+	return false
+}
+
+// isSQLCMethodName checks if method name follows SQLC patterns
+func (a *Analyzer) isSQLCMethodName(methodName string) bool {
+	// SQLC generated method names are typically PascalCase and not standard SQL methods
+	if !a.isPascalCase(methodName) {
+		return false
+	}
+	
+	// Common SQLC method name patterns
+	commonPrefixes := []string{
+		"Get", "List", "Create", "Update", "Delete", "Count", "Find", "Select", "Insert",
+	}
+	
+	for _, prefix := range commonPrefixes {
+		if len(methodName) >= len(prefix) && methodName[:len(prefix)] == prefix {
+			return true
+		}
+	}
+	
+	return false
+}
+
+// containsQueriesType checks if type name contains common SQLC patterns (deprecated)
 func (a *Analyzer) containsQueriesType(typeName string) bool {
 	// 一般的なSQLCの型パターン
 	patterns := []string{
 		"Queries",
 		"queries",
-		"DB",
-		"db",
 	}
 	
 	for _, pattern := range patterns {
