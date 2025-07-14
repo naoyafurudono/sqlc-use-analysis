@@ -1,0 +1,438 @@
+{
+  "functions": {
+    "New": {
+      "name": "New",
+      "package": "db",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/db/query.sql.go",
+      "start_line": 20,
+      "end_line": 22,
+      "table_access": {}
+    },
+    "NewPostHandler": {
+      "name": "NewPostHandler",
+      "package": "handler",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/handler/post_handler.go",
+      "start_line": 14,
+      "end_line": 19,
+      "table_access": {}
+    },
+    "NewPostService": {
+      "name": "NewPostService",
+      "package": "service",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/service/post_service.go",
+      "start_line": 13,
+      "end_line": 17,
+      "table_access": {}
+    },
+    "NewUserHandler": {
+      "name": "NewUserHandler",
+      "package": "handler",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/handler/user_handler.go",
+      "start_line": 14,
+      "end_line": 19,
+      "table_access": {}
+    },
+    "NewUserService": {
+      "name": "NewUserService",
+      "package": "service",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/service/user_service.go",
+      "start_line": 13,
+      "end_line": 17,
+      "table_access": {}
+    },
+    "PostHandler.AddComment": {
+      "name": "PostHandler.AddComment",
+      "package": "handler",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/handler/post_handler.go",
+      "start_line": 62,
+      "end_line": 92,
+      "table_access": {}
+    },
+    "PostHandler.CreatePost": {
+      "name": "PostHandler.CreatePost",
+      "package": "handler",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/handler/post_handler.go",
+      "start_line": 21,
+      "end_line": 40,
+      "table_access": {}
+    },
+    "PostHandler.GetPostWithComments": {
+      "name": "PostHandler.GetPostWithComments",
+      "package": "handler",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/handler/post_handler.go",
+      "start_line": 42,
+      "end_line": 60,
+      "table_access": {}
+    },
+    "PostService.AddComment": {
+      "name": "PostService.AddComment",
+      "package": "service",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/service/post_service.go",
+      "start_line": 43,
+      "end_line": 53,
+      "table_access": {
+        "comments": {
+          "operations": [
+            "INSERT"
+          ],
+          "methods": [
+            "CreateComment"
+          ],
+          "count": 1
+        }
+      }
+    },
+    "PostService.CreatePost": {
+      "name": "PostService.CreatePost",
+      "package": "service",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/service/post_service.go",
+      "start_line": 19,
+      "end_line": 29,
+      "table_access": {
+        "posts": {
+          "operations": [
+            "INSERT"
+          ],
+          "methods": [
+            "CreatePost"
+          ],
+          "count": 1
+        }
+      }
+    },
+    "PostService.GetPost": {
+      "name": "PostService.GetPost",
+      "package": "service",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/service/post_service.go",
+      "start_line": 31,
+      "end_line": 37,
+      "table_access": {
+        "posts": {
+          "operations": [
+            "SELECT"
+          ],
+          "methods": [
+            "GetPost"
+          ],
+          "count": 1
+        },
+        "users": {
+          "operations": [
+            "SELECT"
+          ],
+          "methods": [
+            "GetPost"
+          ],
+          "count": 1
+        }
+      }
+    },
+    "PostService.GetPostComments": {
+      "name": "PostService.GetPostComments",
+      "package": "service",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/service/post_service.go",
+      "start_line": 39,
+      "end_line": 41,
+      "table_access": {
+        "comments": {
+          "operations": [
+            "SELECT"
+          ],
+          "methods": [
+            "GetCommentsByPost"
+          ],
+          "count": 1
+        },
+        "users": {
+          "operations": [
+            "SELECT"
+          ],
+          "methods": [
+            "GetCommentsByPost"
+          ],
+          "count": 1
+        }
+      }
+    },
+    "Queries.CreateComment": {
+      "name": "Queries.CreateComment",
+      "package": "db",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/db/query.sql.go",
+      "start_line": 34,
+      "end_line": 45,
+      "table_access": {}
+    },
+    "Queries.CreatePost": {
+      "name": "Queries.CreatePost",
+      "package": "db",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/db/query.sql.go",
+      "start_line": 57,
+      "end_line": 68,
+      "table_access": {}
+    },
+    "Queries.CreateUser": {
+      "name": "Queries.CreateUser",
+      "package": "db",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/db/query.sql.go",
+      "start_line": 79,
+      "end_line": 89,
+      "table_access": {}
+    },
+    "Queries.GetCommentsByPost": {
+      "name": "Queries.GetCommentsByPost",
+      "package": "db",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/db/query.sql.go",
+      "start_line": 104,
+      "end_line": 131,
+      "table_access": {}
+    },
+    "Queries.GetPost": {
+      "name": "Queries.GetPost",
+      "package": "db",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/db/query.sql.go",
+      "start_line": 147,
+      "end_line": 159,
+      "table_access": {}
+    },
+    "Queries.GetUser": {
+      "name": "Queries.GetUser",
+      "package": "db",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/db/query.sql.go",
+      "start_line": 165,
+      "end_line": 175,
+      "table_access": {}
+    },
+    "Queries.ListPostsByUser": {
+      "name": "Queries.ListPostsByUser",
+      "package": "db",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/db/query.sql.go",
+      "start_line": 181,
+      "end_line": 208,
+      "table_access": {}
+    },
+    "Queries.ListUsers": {
+      "name": "Queries.ListUsers",
+      "package": "db",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/db/query.sql.go",
+      "start_line": 214,
+      "end_line": 240,
+      "table_access": {}
+    },
+    "UserHandler.CreateUser": {
+      "name": "UserHandler.CreateUser",
+      "package": "handler",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/handler/user_handler.go",
+      "start_line": 21,
+      "end_line": 28,
+      "table_access": {}
+    },
+    "UserHandler.GetUserProfile": {
+      "name": "UserHandler.GetUserProfile",
+      "package": "handler",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/handler/user_handler.go",
+      "start_line": 30,
+      "end_line": 48,
+      "table_access": {}
+    },
+    "UserHandler.ListAllUsers": {
+      "name": "UserHandler.ListAllUsers",
+      "package": "handler",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/handler/user_handler.go",
+      "start_line": 50,
+      "end_line": 58,
+      "table_access": {}
+    },
+    "UserService.CreateUser": {
+      "name": "UserService.CreateUser",
+      "package": "service",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/service/user_service.go",
+      "start_line": 19,
+      "end_line": 28,
+      "table_access": {
+        "users": {
+          "operations": [
+            "INSERT"
+          ],
+          "methods": [
+            "CreateUser"
+          ],
+          "count": 1
+        }
+      }
+    },
+    "UserService.GetUser": {
+      "name": "UserService.GetUser",
+      "package": "service",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/service/user_service.go",
+      "start_line": 30,
+      "end_line": 36,
+      "table_access": {
+        "users": {
+          "operations": [
+            "SELECT"
+          ],
+          "methods": [
+            "GetUser"
+          ],
+          "count": 1
+        }
+      }
+    },
+    "UserService.GetUserPosts": {
+      "name": "UserService.GetUserPosts",
+      "package": "service",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/service/user_service.go",
+      "start_line": 42,
+      "end_line": 44,
+      "table_access": {
+        "posts": {
+          "operations": [
+            "SELECT"
+          ],
+          "methods": [
+            "ListPostsByUser"
+          ],
+          "count": 1
+        }
+      }
+    },
+    "UserService.ListUsers": {
+      "name": "UserService.ListUsers",
+      "package": "service",
+      "file": "/Users/naoya-furudono/src/github.com/naoyafurudono/sqlc-use-analysis/test/fixtures/simple_project/internal/service/user_service.go",
+      "start_line": 38,
+      "end_line": 40,
+      "table_access": {
+        "users": {
+          "operations": [
+            "SELECT"
+          ],
+          "methods": [
+            "ListUsers"
+          ],
+          "count": 1
+        }
+      }
+    }
+  },
+  "tables": {
+    "comments": {
+      "name": "comments",
+      "accessed_by": [
+        "PostService.AddComment",
+        "PostService.GetPostComments"
+      ],
+      "operation_count": {
+        "INSERT": 1,
+        "SELECT": 1
+      }
+    },
+    "posts": {
+      "name": "posts",
+      "accessed_by": [
+        "PostService.CreatePost",
+        "UserService.GetUserPosts",
+        "PostService.GetPost"
+      ],
+      "operation_count": {
+        "INSERT": 1,
+        "SELECT": 2
+      }
+    },
+    "users": {
+      "name": "users",
+      "accessed_by": [
+        "PostService.GetPost",
+        "UserService.GetUser",
+        "PostService.GetPostComments",
+        "UserService.ListUsers",
+        "UserService.CreateUser"
+      ],
+      "operation_count": {
+        "INSERT": 1,
+        "SELECT": 4
+      }
+    }
+  },
+  "dependencies": [
+    {
+      "function": "UserService.GetUser",
+      "table": "users",
+      "operation": "SELECT",
+      "method": "GetUser",
+      "line": 31
+    },
+    {
+      "function": "PostService.AddComment",
+      "table": "comments",
+      "operation": "INSERT",
+      "method": "CreateComment",
+      "line": 44
+    },
+    {
+      "function": "PostService.GetPostComments",
+      "table": "comments",
+      "operation": "SELECT",
+      "method": "GetCommentsByPost",
+      "line": 40
+    },
+    {
+      "function": "PostService.GetPostComments",
+      "table": "users",
+      "operation": "SELECT",
+      "method": "GetCommentsByPost",
+      "line": 40
+    },
+    {
+      "function": "UserService.ListUsers",
+      "table": "users",
+      "operation": "SELECT",
+      "method": "ListUsers",
+      "line": 39
+    },
+    {
+      "function": "UserService.CreateUser",
+      "table": "users",
+      "operation": "INSERT",
+      "method": "CreateUser",
+      "line": 20
+    },
+    {
+      "function": "PostService.GetPost",
+      "table": "users",
+      "operation": "SELECT",
+      "method": "GetPost",
+      "line": 32
+    },
+    {
+      "function": "PostService.GetPost",
+      "table": "posts",
+      "operation": "SELECT",
+      "method": "GetPost",
+      "line": 32
+    },
+    {
+      "function": "PostService.CreatePost",
+      "table": "posts",
+      "operation": "INSERT",
+      "method": "CreatePost",
+      "line": 20
+    },
+    {
+      "function": "UserService.GetUserPosts",
+      "table": "posts",
+      "operation": "SELECT",
+      "method": "ListPostsByUser",
+      "line": 43
+    }
+  ],
+  "summary": {
+    "function_count": 27,
+    "table_count": 3,
+    "dependency_count": 10,
+    "operation_counts": {
+      "INSERT": 3,
+      "SELECT": 7
+    }
+  }
+}

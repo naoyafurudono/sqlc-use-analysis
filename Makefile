@@ -70,6 +70,19 @@ docker-build:
 docker-run:
 	docker run --rm ${BINARY_NAME}:${VERSION}
 
+# Run demo
+demo:
+	go run cmd/demo/main.go
+
+# Run interactive demo
+demo-interactive:
+	go run cmd/interactive-demo/main.go
+
+# Build demo binaries
+build-demo:
+	go build -o bin/demo cmd/demo/main.go
+	go build -o bin/interactive-demo cmd/interactive-demo/main.go
+
 # Help
 help:
 	@echo "Available targets:"
@@ -87,4 +100,7 @@ help:
 	@echo "  integration-test - Run integration tests"
 	@echo "  docker-build     - Build Docker image"
 	@echo "  docker-run       - Run Docker container"
+	@echo "  demo             - Run basic demo"
+	@echo "  demo-interactive - Run interactive demo"
+	@echo "  build-demo       - Build demo binaries"
 	@echo "  help             - Show this help"
