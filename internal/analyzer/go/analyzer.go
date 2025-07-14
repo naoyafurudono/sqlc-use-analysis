@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"go/token"
 	"go/types"
+	"strings"
 	"golang.org/x/tools/go/packages"
 
 	"github.com/naoyafurudono/sqlc-use-analysis/internal/errors"
@@ -37,29 +38,35 @@ func (a *Analyzer) LoadPackages(patterns ...string) error {
 		Fset: a.fset,
 	}
 
-	pkgs, err := packages.Load(cfg, patterns...)
-	if err != nil {
-		return fmt.Errorf("failed to load packages: %w", err)
-	}
+	// Use error recovery for package loading
+	err := errors.SafeExecute(a.errorCollector, func() error {
+		pkgs, err := packages.Load(cfg, patterns...)
+		if err != nil {
+			return fmt.Errorf("failed to load packages: %w", err)
+		}
 
-	// Check for package loading errors
-	for _, pkg := range pkgs {
-		if len(pkg.Errors) > 0 {
-			for _, pkgErr := range pkg.Errors {
-				goErr := errors.NewError(errors.CategoryParse, errors.SeverityError,
-					fmt.Sprintf("package loading error: %s", pkgErr.Msg))
-				goErr.Details["package"] = pkg.PkgPath
-				goErr.Details["file"] = pkgErr.Pos
+		// Check for package loading errors
+		for _, pkg := range pkgs {
+			if len(pkg.Errors) > 0 {
+				for _, pkgErr := range pkg.Errors {
+					goErr := errors.NewError(errors.CategoryParse, errors.SeverityError,
+						fmt.Sprintf("package loading error: %s", pkgErr.Msg))
+					goErr.Details["package"] = pkg.PkgPath
+					goErr.Details["package_name"] = pkg.Name
+					goErr.Details["error_position"] = pkgErr.Pos
 
-				if collectErr := a.errorCollector.Add(goErr); collectErr != nil {
-					return collectErr
+					if collectErr := a.errorCollector.Add(goErr); collectErr != nil {
+						return collectErr
+					}
 				}
 			}
 		}
-	}
 
-	a.packages = pkgs
-	return nil
+		a.packages = pkgs
+		return nil
+	}, "Go package loading")
+
+	return err
 }
 
 // AnalyzePackages analyzes loaded packages and extracts function information
@@ -70,23 +77,33 @@ func (a *Analyzer) AnalyzePackages() (map[string]pkgtypes.GoFunctionInfo, error)
 
 	functions := make(map[string]pkgtypes.GoFunctionInfo)
 
-	for _, pkg := range a.packages {
-		pkgFunctions, err := a.analyzePackage(pkg)
-		if err != nil {
-			// エラーを収集して処理を継続
-			goErr := errors.NewError(errors.CategoryParse, errors.SeverityError,
-				fmt.Sprintf("failed to analyze package '%s': %v", pkg.PkgPath, err))
-			goErr.Details["package"] = pkg.PkgPath
-
-			if collectErr := a.errorCollector.Add(goErr); collectErr != nil {
-				return functions, collectErr
+	// Use error recovery for robust package processing
+	partialResult := errors.ProcessWithPartialFailure(
+		a.packages,
+		func(pkg *packages.Package) error {
+			pkgFunctions, err := a.analyzePackage(pkg)
+			if err != nil {
+				return errors.Wrap(err, fmt.Sprintf("failed to analyze package '%s'", pkg.PkgPath))
 			}
-			continue
-		}
 
-		// 関数情報をマージ
-		for funcName, funcInfo := range pkgFunctions {
-			functions[funcName] = funcInfo
+			// 関数情報をマージ
+			for funcName, funcInfo := range pkgFunctions {
+				functions[funcName] = funcInfo
+			}
+			return nil
+		},
+		a.errorCollector,
+		"Go package analysis",
+	)
+
+	// Add package context to errors
+	for _, err := range partialResult.Errors {
+		for _, pkg := range a.packages {
+			if strings.Contains(err.Message, pkg.PkgPath) {
+				err.Details["package"] = pkg.PkgPath
+				err.Details["package_name"] = pkg.Name
+				break
+			}
 		}
 	}
 

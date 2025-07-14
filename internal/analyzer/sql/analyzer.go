@@ -37,23 +37,34 @@ type Query struct {
 func (a *Analyzer) AnalyzeQueries(queries []Query) (map[string]types.SQLMethodInfo, error) {
 	results := make(map[string]types.SQLMethodInfo)
 	
-	for _, query := range queries {
-		methodInfo, err := a.AnalyzeQuery(query)
-		if err != nil {
-			// エラーを収集して処理を継続
-			sqlErr := errors.NewError(errors.CategoryParse, errors.SeverityError, 
-				fmt.Sprintf("failed to analyze query '%s': %v", query.Name, err))
-			sqlErr.Details["query_name"] = query.Name
-			sqlErr.Details["query_text"] = query.Text
-			sqlErr.Details["filename"] = query.Filename
-			
-			if collectErr := a.errorCollector.Add(sqlErr); collectErr != nil {
-				return results, collectErr
+	// Use error recovery for robust processing
+	partialResult := errors.ProcessWithPartialFailure(
+		queries,
+		func(query Query) error {
+			methodInfo, err := a.AnalyzeQuery(query)
+			if err != nil {
+				return errors.Wrap(err, fmt.Sprintf("failed to analyze query '%s'", query.Name))
 			}
-			continue
+			results[methodInfo.MethodName] = methodInfo
+			return nil
+		},
+		a.errorCollector,
+		"SQL query analysis",
+	)
+	
+	// Add specific error details for failed queries
+	for _, err := range partialResult.Errors {
+		if len(queries) > 0 {
+			// Try to find the specific query that failed
+			for _, query := range queries {
+				if strings.Contains(err.Message, query.Name) {
+					err.Details["query_name"] = query.Name
+					err.Details["query_text"] = query.Text
+					err.Details["filename"] = query.Filename
+					break
+				}
+			}
 		}
-		
-		results[methodInfo.MethodName] = methodInfo
 	}
 	
 	return results, nil
