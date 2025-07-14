@@ -331,8 +331,8 @@
       "name": "posts",
       "accessed_by": [
         "PostService.CreatePost",
-        "UserService.GetUserPosts",
-        "PostService.GetPost"
+        "PostService.GetPost",
+        "UserService.GetUserPosts"
       ],
       "operation_count": {
         "INSERT": 1,
@@ -342,11 +342,11 @@
     "users": {
       "name": "users",
       "accessed_by": [
-        "PostService.GetPost",
-        "UserService.GetUser",
-        "PostService.GetPostComments",
         "UserService.ListUsers",
-        "UserService.CreateUser"
+        "UserService.CreateUser",
+        "PostService.GetPost",
+        "PostService.GetPostComments",
+        "UserService.GetUser"
       ],
       "operation_count": {
         "INSERT": 1,
@@ -356,11 +356,25 @@
   },
   "dependencies": [
     {
-      "function": "UserService.GetUser",
+      "function": "PostService.GetPost",
+      "table": "posts",
+      "operation": "SELECT",
+      "method": "GetPost",
+      "line": 32
+    },
+    {
+      "function": "PostService.GetPost",
       "table": "users",
       "operation": "SELECT",
-      "method": "GetUser",
-      "line": 31
+      "method": "GetPost",
+      "line": 32
+    },
+    {
+      "function": "UserService.GetUserPosts",
+      "table": "posts",
+      "operation": "SELECT",
+      "method": "ListPostsByUser",
+      "line": 43
     },
     {
       "function": "PostService.AddComment",
@@ -384,6 +398,20 @@
       "line": 40
     },
     {
+      "function": "UserService.GetUser",
+      "table": "users",
+      "operation": "SELECT",
+      "method": "GetUser",
+      "line": 31
+    },
+    {
+      "function": "PostService.CreatePost",
+      "table": "posts",
+      "operation": "INSERT",
+      "method": "CreatePost",
+      "line": 20
+    },
+    {
       "function": "UserService.ListUsers",
       "table": "users",
       "operation": "SELECT",
@@ -396,34 +424,6 @@
       "operation": "INSERT",
       "method": "CreateUser",
       "line": 20
-    },
-    {
-      "function": "PostService.GetPost",
-      "table": "users",
-      "operation": "SELECT",
-      "method": "GetPost",
-      "line": 32
-    },
-    {
-      "function": "PostService.GetPost",
-      "table": "posts",
-      "operation": "SELECT",
-      "method": "GetPost",
-      "line": 32
-    },
-    {
-      "function": "PostService.CreatePost",
-      "table": "posts",
-      "operation": "INSERT",
-      "method": "CreatePost",
-      "line": 20
-    },
-    {
-      "function": "UserService.GetUserPosts",
-      "table": "posts",
-      "operation": "SELECT",
-      "method": "ListPostsByUser",
-      "line": 43
     }
   ],
   "summary": {

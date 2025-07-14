@@ -37,8 +37,8 @@ build-all:
 	GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o bin/${BINARY_NAME}-windows-amd64.exe cmd/analyzer/main.go
 
 # Install the binary
-install:
-	go install ${LDFLAGS} cmd/analyzer/main.go
+install: build
+	go install ${LDFLAGS} ./cmd/analyzer
 
 # Clean build artifacts
 clean:
