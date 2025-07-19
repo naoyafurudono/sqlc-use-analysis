@@ -22,7 +22,7 @@ func DefaultConfig() *types.Config {
 			IncludeVendor:       false,
 			FollowSymlinks:      false,
 			MaxDepth:            10,
-			SQLDialect:          "postgresql",
+			SQLDialect:          "mysql",
 			CaseSensitiveTables: false,
 		},
 		Output: types.OutputConfig{
@@ -30,7 +30,6 @@ func DefaultConfig() *types.Config {
 			IncludeMetadata: true,
 			IncludeDetails:  false,
 			Pretty:          true,
-			SplitFiles:      false,
 		},
 		Performance: types.PerformanceConfig{
 			MaxWorkers:     runtime.NumCPU(),

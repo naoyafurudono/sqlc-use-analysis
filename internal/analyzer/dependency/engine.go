@@ -22,7 +22,7 @@ type Engine struct {
 // NewEngine creates a new dependency analysis engine
 func NewEngine(errorCollector *errors.ErrorCollector) *Engine {
 	return &Engine{
-		sqlAnalyzer:    sql.NewAnalyzer("postgresql", false, errorCollector),
+		sqlAnalyzer:    sql.NewAnalyzer("mysql", false, errorCollector),
 		errorCollector: errorCollector,
 	}
 }
@@ -212,7 +212,7 @@ type EngineStats struct {
 // Reset clears the engine state for reuse
 func (e *Engine) Reset() {
 	e.errorCollector.Clear()
-	e.sqlAnalyzer = sql.NewAnalyzer("postgresql", false, e.errorCollector)
+	e.sqlAnalyzer = sql.NewAnalyzer("mysql", false, e.errorCollector)
 	e.goAnalyzer = nil
 	e.mapper = nil
 }

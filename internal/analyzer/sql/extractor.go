@@ -29,8 +29,9 @@ func (a *Analyzer) extractTablesFromSelect(sqlText string) ([]string, error) {
 
 // extractTablesFromInsert extracts table names from INSERT statements
 func (a *Analyzer) extractTablesFromInsert(sqlText string) ([]string, error) {
-	// INSERT INTO table_name の形式
-	pattern := regexp.MustCompile(`(?i)INSERT\s+INTO\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)`)
+	// MySQL/PostgreSQL共通: INSERT INTO table_name の形式
+	// また、バッククォートでのテーブル名も対応
+	pattern := regexp.MustCompile(`(?i)INSERT\s+INTO\s+` + a.getTableNamePattern())
 	matches := pattern.FindStringSubmatch(sqlText)
 	
 	if len(matches) >= 2 {
@@ -45,8 +46,8 @@ func (a *Analyzer) extractTablesFromInsert(sqlText string) ([]string, error) {
 func (a *Analyzer) extractTablesFromUpdate(sqlText string) ([]string, error) {
 	var tables []string
 	
-	// UPDATE table_name SET の形式
-	pattern := regexp.MustCompile(`(?i)UPDATE\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)\s+SET`)
+	// UPDATE table_name SET の形式（MySQL/PostgreSQL対応）
+	pattern := regexp.MustCompile(`(?i)UPDATE\s+` + a.getTableNamePattern() + `\s+SET`)
 	matches := pattern.FindStringSubmatch(sqlText)
 	
 	if len(matches) >= 2 {
@@ -80,8 +81,8 @@ func (a *Analyzer) extractTablesFromUpdate(sqlText string) ([]string, error) {
 func (a *Analyzer) extractTablesFromDelete(sqlText string) ([]string, error) {
 	var tables []string
 	
-	// DELETE FROM table_name の形式
-	pattern := regexp.MustCompile(`(?i)DELETE\s+FROM\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)`)
+	// DELETE FROM table_name の形式（MySQL/PostgreSQL対応）
+	pattern := regexp.MustCompile(`(?i)DELETE\s+FROM\s+` + a.getTableNamePattern())
 	matches := pattern.FindStringSubmatch(sqlText)
 	
 	if len(matches) >= 2 {
@@ -136,14 +137,15 @@ func (a *Analyzer) extractFromClause(sqlText string) ([]string, error) {
 func (a *Analyzer) extractJoinTables(sqlText string) ([]string, error) {
 	tableSet := make(map[string]bool)
 	
-	// 各種JOIN句のパターン
+	// 各種JOIN句のパターン（MySQL/PostgreSQL対応）
+	tablePattern := a.getTableNamePattern()
 	joinPatterns := []*regexp.Regexp{
-		regexp.MustCompile(`(?i)\bINNER\s+JOIN\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)`),
-		regexp.MustCompile(`(?i)\bLEFT\s+(?:OUTER\s+)?JOIN\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)`),
-		regexp.MustCompile(`(?i)\bRIGHT\s+(?:OUTER\s+)?JOIN\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)`),
-		regexp.MustCompile(`(?i)\bFULL\s+(?:OUTER\s+)?JOIN\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)`),
-		regexp.MustCompile(`(?i)\bCROSS\s+JOIN\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)`),
-		regexp.MustCompile(`(?i)\bJOIN\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)`), // 単純なJOIN
+		regexp.MustCompile(`(?i)\bINNER\s+JOIN\s+` + tablePattern),
+		regexp.MustCompile(`(?i)\bLEFT\s+(?:OUTER\s+)?JOIN\s+` + tablePattern),
+		regexp.MustCompile(`(?i)\bRIGHT\s+(?:OUTER\s+)?JOIN\s+` + tablePattern),
+		regexp.MustCompile(`(?i)\bFULL\s+(?:OUTER\s+)?JOIN\s+` + tablePattern),
+		regexp.MustCompile(`(?i)\bCROSS\s+JOIN\s+` + tablePattern),
+		regexp.MustCompile(`(?i)\bJOIN\s+` + tablePattern), // 単純なJOIN
 	}
 	
 	for _, pattern := range joinPatterns {
@@ -218,6 +220,16 @@ func (a *Analyzer) parseTableList(tableList string) []string {
 func (a *Analyzer) normalizeTableName(tableName string) string {
 	tableName = strings.TrimSpace(tableName)
 	
+	// MySQL/PostgreSQLのクォートを除去
+	switch a.dialect {
+	case "mysql":
+		// バッククォートを除去
+		tableName = strings.Trim(tableName, "`")
+	case "postgresql":
+		// ダブルクォートを除去
+		tableName = strings.Trim(tableName, "\"")
+	}
+	
 	if !a.caseSensitive {
 		tableName = strings.ToLower(tableName)
 	}
@@ -229,4 +241,19 @@ func (a *Analyzer) normalizeTableName(tableName string) string {
 func (a *Analyzer) isSubquery(text string) bool {
 	text = strings.TrimSpace(text)
 	return strings.HasPrefix(text, "(") && strings.HasSuffix(text, ")")
+}
+
+// getTableNamePattern returns the regex pattern for table names based on dialect
+func (a *Analyzer) getTableNamePattern() string {
+	switch a.dialect {
+	case "mysql":
+		// MySQL: バッククォートでのテーブル名をサポート
+		return `(` + "`" + `[a-zA-Z_][a-zA-Z0-9_]*` + "`" + `|[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)`
+	case "postgresql":
+		// PostgreSQL: ダブルクォートでのテーブル名をサポート
+		return `("[a-zA-Z_][a-zA-Z0-9_]*"|[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)`
+	default:
+		// デフォルト（標準SQL）
+		return `([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)`
+	}
 }

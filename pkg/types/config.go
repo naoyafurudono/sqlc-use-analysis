@@ -31,8 +31,8 @@ type AnalysisConfig struct {
 	FollowSymlinks     bool     `json:"follow_symlinks" yaml:"follow_symlinks"`
 	MaxDepth           int      `json:"max_depth" yaml:"max_depth"`
 	
-	// SQL解析設定
-	SQLDialect         string   `json:"sql_dialect" yaml:"sql_dialect"`
+	// SQL解析設定（MySQL優先）
+	SQLDialect         string   `json:"sql_dialect" yaml:"sql_dialect"` // デフォルト: "mysql"
 	CaseSensitiveTables bool    `json:"case_sensitive_tables" yaml:"case_sensitive_tables"`
 	
 	// フィルタリング
@@ -42,11 +42,10 @@ type AnalysisConfig struct {
 
 // OutputConfig contains output-specific configuration
 type OutputConfig struct {
-	Format            OutputFormat `json:"format" yaml:"format"`
+	Format            OutputFormat `json:"format" yaml:"format"`     // 常に"json"
 	IncludeMetadata   bool        `json:"include_metadata" yaml:"include_metadata"`
 	IncludeDetails    bool        `json:"include_details" yaml:"include_details"`
 	Pretty            bool        `json:"pretty" yaml:"pretty"`
-	SplitFiles        bool        `json:"split_files" yaml:"split_files"`
 }
 
 // PerformanceConfig contains performance-related configuration
@@ -70,6 +69,4 @@ type OutputFormat string
 
 const (
 	FormatJSON OutputFormat = "json"
-	FormatCSV  OutputFormat = "csv"
-	FormatHTML OutputFormat = "html"
 )

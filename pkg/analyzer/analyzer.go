@@ -146,12 +146,8 @@ func (a *Analyzer) AnalyzeAndFormat(ctx context.Context, request AnalysisRequest
 	switch format {
 	case "json":
 		outputFormat = types.FormatJSON
-	case "csv":
-		outputFormat = types.FormatCSV
-	case "html":
-		outputFormat = types.FormatHTML
 	default:
-		return nil, fmt.Errorf("unsupported output format: %s", format)
+		return nil, fmt.Errorf("unsupported output format: %s (only JSON is supported)", format)
 	}
 
 	// Format the result
