@@ -1,35 +1,20 @@
 # sqlc-use-analysis
 
-A sqlc plugin that analyzes and visualizes database dependencies in Go projects.
+A sqlc plugin that analyzes and visualizes database dependencies in Go projects, with primary support for MySQL databases.
 
-## 🎯 Project Status
+## 🎯 Features
 
-**Current Phase**: M1 - Infrastructure Development (Week 1-2)
+### Core Functionality
+- **MySQL-First Support**: Optimized for MySQL syntax including backtick-quoted identifiers
+- **Comprehensive SQL Analysis**: Extracts table names from SELECT, INSERT, UPDATE, DELETE operations
+- **Go Static Analysis**: Uses AST parsing to identify SQLC method calls
+- **Dependency Mapping**: Maps relationships between Go functions and database tables
+- **JSON Output**: Structured JSON output for easy integration with other tools
 
-### ✅ Completed
-- [x] Project initialization with Go modules
-- [x] Complete directory structure setup
-- [x] Basic CLI implementation with plugin interface
-- [x] Comprehensive type definitions for analysis
-- [x] Configuration management system
-- [x] Error handling framework
-- [x] Input/output interfaces
-- [x] Basic orchestrator for coordinating analysis
-- [x] Makefile with development commands
-- [x] GitHub Actions CI/CD pipeline
-- [x] Comprehensive unit tests with good coverage
-- [x] golangci-lint configuration
-- [x] Git ignore and basic project files
-
-### 🔄 In Progress
-- [ ] SQL query analyzer implementation
-- [ ] Go static analyzer implementation
-- [ ] Dependency mapping engine
-
-### 📋 Next Steps
-1. Implement SQL query analyzer (M2)
-2. Implement Go static analyzer (M3)
-3. Create dependency mapping engine (M4)
+### Key Benefits
+- **Impact Analysis**: Quickly identify which functions are affected by table schema changes
+- **Architecture Visualization**: Understand data flow and dependencies in your codebase
+- **SQLC Integration**: Works seamlessly as an SQLC plugin
 
 ## 🚀 Quick Start
 
@@ -46,10 +31,35 @@ make deps
 make build
 ```
 
-### Basic Usage
+### SQLC Plugin Configuration
+
+Add to your `sqlc.yaml`:
+
+```yaml
+version: "2"
+sql:
+  - engine: "mysql"
+    queries: "query.sql"
+    schema: "schema.sql"
+    gen:
+      go:
+        package: "db"
+        out: "db"
+plugins:
+  - name: "dependency-analyzer"
+    process:
+      cmd: "sqlc-analyzer"
+    options:
+      root_path: "."
+      output_path: "db_dependencies.json"
+      exclude:
+        - "**/*_test.go"
+        - "vendor/"
+```
+
+### Generate Dependencies
 ```bash
-# Test with sample input
-echo '{"settings": {"root_path": "."}, "queries": []}' | ./bin/sqlc-analyzer
+sqlc generate
 ```
 
 ## 🏗️ Architecture
@@ -138,18 +148,22 @@ make help             # Show all commands
 └── docs/                  # Documentation
 ```
 
-## 🎯 Goals
+## 🎯 Database Support
 
-This plugin will provide:
+### Primary Support
+- **MySQL**: Full support for MySQL-specific syntax including:
+  - Backtick-quoted identifiers (\`table_name\`)
+  - MySQL JOIN syntax
+  - Common MySQL patterns
 
-1. **Function-level analysis**: Identify which Go functions access which database tables
-2. **Operation mapping**: Track SELECT, INSERT, UPDATE, DELETE operations per function
-3. **Dependency visualization**: Generate comprehensive dependency maps
-4. **Architecture insights**: Help understand data flow and dependencies
+### Secondary Support
+- **PostgreSQL**: Basic support for standard SQL syntax
+  - Double-quoted identifiers ("table_name")
+  - Standard SQL operations
 
 ## 📄 Output Format
 
-The plugin generates JSON output with both function-centric and table-centric views:
+The plugin generates JSON output optimized for programmatic consumption:
 
 ```json
 {
